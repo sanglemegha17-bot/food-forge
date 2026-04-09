@@ -3,12 +3,23 @@ from fastapi import FastAPI, Depends, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
 from dotenv import load_dotenv
+from sqlalchemy.ext.asyncio import create_async_engine
 
 # Load environment variables
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://your-project.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "your-service-role-key")
+
+# Neon Database Connection
+DATABASE_URL = os.getenv("DATABASE_URL")
+if DATABASE_URL:
+    # Convert postgres:// to postgresql+asyncpg://
+    DB_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+    engine = create_async_engine(DB_URL, echo=False)
+else:
+    print("Warning: DATABASE_URL not set")
+    engine = None
 
 # Client initialization
 # NOTE: In a real app, use the service role key CAREFULLY. 
