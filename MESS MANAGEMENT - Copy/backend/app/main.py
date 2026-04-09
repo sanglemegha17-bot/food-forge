@@ -8,27 +8,34 @@ from sqlalchemy.ext.asyncio import create_async_engine
 # Load environment variables
 load_dotenv()
 
-SUPABASE_URL = os.getenv("SUPABASE_URL", "https://your-project.supabase.co")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "your-service-role-key")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
 # Neon Database Connection
 DATABASE_URL = os.getenv("DATABASE_URL")
+engine = None
+
 if DATABASE_URL:
-    # Convert postgres:// to postgresql+asyncpg://
-    DB_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
-    engine = create_async_engine(DB_URL, echo=False)
+    try:
+        # Convert postgres:// to postgresql+asyncpg://
+        DB_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+        engine = create_async_engine(DB_URL, echo=False)
+        print("Database engine initialized successfully")
+    except Exception as e:
+        print(f"Warning: Database initialization error: {e}")
 else:
-    print("Warning: DATABASE_URL not set")
-    engine = None
+    print("Warning: DATABASE_URL environment variable not set")
 
 # Client initialization
-# NOTE: In a real app, use the service role key CAREFULLY. 
-# For end-user actions, you might want to forward the user's JWT.
-try:
-    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-except Exception as e:
-    print(f"Warning: Supabase client failed to initialize (Config missing?): {e}")
-    supabase = None
+supabase = None
+if SUPABASE_URL and SUPABASE_KEY:
+    try:
+        supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        print("Supabase client initialized successfully")
+    except Exception as e:
+        print(f"Warning: Supabase client failed to initialize: {e}")
+else:
+    print("Warning: Supabase credentials not fully configured")
 
 app = FastAPI(title="The Food Forge API")
 
