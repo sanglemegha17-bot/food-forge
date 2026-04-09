@@ -1,0 +1,14 @@
+# Railway configuration for Python FastAPI backend
+
+[build]
+builder = "nixpacks"
+
+[build.nixpacks.pkgs]
+python = "3.11"
+
+[[services]]
+name = "api"
+startCommand = "bash start.sh"
+
+[[services.tcp]]
+port = 8000
