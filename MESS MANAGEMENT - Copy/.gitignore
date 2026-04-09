@@ -1,0 +1,18 @@
+# Dependencies
+frontend/node_modules/
+frontend/.next/
+backend/__pycache__/
+backend/app/__pycache__/
+backend/app/routes/__pycache__/
+
+# Environment files
+frontend/.env.local
+backend/.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
